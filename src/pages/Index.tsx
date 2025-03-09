@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import SocialCard from '@/components/SocialCard';
-import { Shield, RefreshCw, AlertCircle } from 'lucide-react';
+import { Shield, RefreshCw, AlertCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { downloadPrivacyData, getPlatformPrivacyData } from '@/utils/downloadUtils';
 
 const platforms = [
   { 
@@ -37,9 +37,7 @@ const Index = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate loading data
     setTimeout(() => {
-      // Calculate overall score and issues
       const totalScore = platforms.reduce((sum, platform) => sum + (platform.connected ? platform.privacyScore : 0), 0);
       const connectedPlatforms = platforms.filter(platform => platform.connected).length;
       const avgScore = connectedPlatforms > 0 ? Math.round(totalScore / connectedPlatforms) : 0;
@@ -52,6 +50,22 @@ const Index = () => {
     }, 1500);
   }, []);
 
+  const handleDownloadAll = () => {
+    toast({
+      title: "Downloading all data",
+      description: "Preparing downloads for all connected platforms...",
+    });
+    
+    setTimeout(() => {
+      platformsData.forEach(platform => {
+        if (platform.connected) {
+          const data = getPlatformPrivacyData(platform.id);
+          downloadPrivacyData(platform.id, data);
+        }
+      });
+    }, 1000);
+  };
+
   const handleRefresh = () => {
     setLoading(true);
     toast({
@@ -59,7 +73,6 @@ const Index = () => {
       description: "Syncing with your connected platforms...",
     });
 
-    // Simulate refreshing data
     setTimeout(() => {
       setLoading(false);
       toast({
@@ -98,20 +111,31 @@ const Index = () => {
             <div className="bg-white rounded-2xl p-6 shadow-elevation-1 lg:col-span-2 animate-scale-in">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-medium">Overall Privacy</h2>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleRefresh}
-                  disabled={loading}
-                  className="flex items-center space-x-2"
-                >
-                  {loading ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4" />
-                  )}
-                  <span>Refresh</span>
-                </Button>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleDownloadAll}
+                    className="flex items-center space-x-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Download All</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRefresh}
+                    disabled={loading}
+                    className="flex items-center space-x-2"
+                  >
+                    {loading ? (
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
+                    <span>Refresh</span>
+                  </Button>
+                </div>
               </div>
               
               {loading ? (
@@ -219,7 +243,6 @@ const Index = () => {
                 />
               ))}
               
-              {/* Add new platform card */}
               <div 
                 className="w-full bg-white bg-opacity-50 backdrop-blur-sm border border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4 hover:border-primary transition-all duration-300 cursor-pointer animate-slide-up"
                 style={{ animationDelay: '300ms' }}
