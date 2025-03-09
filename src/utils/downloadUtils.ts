@@ -1,6 +1,6 @@
 
 /**
- * Utility functions for downloading privacy data
+ * Utility functions for downloading privacy data and backend integration
  */
 
 /**
@@ -76,3 +76,85 @@ export const getPlatformPrivacyData = (platform: string) => {
       return commonSettings;
   }
 };
+
+/**
+ * Save privacy settings to the backend
+ */
+export const savePrivacySettings = async (platform: string, settings: any) => {
+  try {
+    // This would be a real API call in a production application
+    console.log(`Saving ${platform} privacy settings to backend:`, settings);
+    
+    // Simulated API call
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ success: true, message: `${platform} privacy settings saved successfully` });
+      }, 800);
+    });
+  } catch (error) {
+    console.error(`Error saving ${platform} privacy settings:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Load privacy settings from the backend
+ */
+export const loadPrivacySettings = async (platform: string) => {
+  try {
+    console.log(`Loading ${platform} privacy settings from backend`);
+    
+    // Simulated API call - in a real app, this would fetch from a backend
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Return dummy data for now
+        const data = getPlatformPrivacyData(platform);
+        resolve({ success: true, data });
+      }, 1000);
+    });
+  } catch (error) {
+    console.error(`Error loading ${platform} privacy settings:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Load all platforms data from the backend
+ */
+export const loadAllPlatformsData = async () => {
+  try {
+    console.log("Loading all platforms data from backend");
+    
+    // Simulated API call - in a real app, this would fetch from a backend
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Return dummy platforms data for now
+        const platforms = [
+          { 
+            id: 'facebook',
+            connected: true,
+            privacyScore: 65,
+            issues: 2
+          },
+          { 
+            id: 'twitter',
+            connected: true,
+            privacyScore: 85,
+            issues: 0
+          },
+          { 
+            id: 'instagram',
+            connected: true,
+            privacyScore: 40,
+            issues: 3
+          }
+        ];
+        resolve({ success: true, platforms });
+      }, 1200);
+    });
+  } catch (error) {
+    console.error("Error loading all platforms data:", error);
+    throw error;
+  }
+};
+
