@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import SocialCard from '@/components/SocialCard';
@@ -10,12 +11,13 @@ import {
   downloadPrivacyData, 
   getPlatformPrivacyData, 
   loadAllPlatformsData,
-  savePrivacySettings
+  savePrivacySettings,
+  Platform
 } from '@/utils/downloadUtils';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
-  const [platformsData, setPlatformsData] = useState([]);
+  const [platformsData, setPlatformsData] = useState<Platform[]>([]);
   const [overallScore, setOverallScore] = useState(0);
   const [issuesCount, setIssuesCount] = useState(0);
   const [savingData, setSavingData] = useState(false);
@@ -32,18 +34,20 @@ const Index = () => {
       const response = await loadAllPlatformsData();
       
       if (response.success) {
-        setPlatformsData(response.platforms);
-        
-        const totalScore = response.platforms.reduce((sum, platform) => 
-          sum + (platform.connected ? platform.privacyScore : 0), 0);
-        const connectedPlatforms = response.platforms.filter(platform => platform.connected).length;
-        const avgScore = connectedPlatforms > 0 ? Math.round(totalScore / connectedPlatforms) : 0;
-        
-        const totalIssues = response.platforms.reduce((sum, platform) => 
-          sum + (platform.issues || 0), 0);
-        
-        setOverallScore(avgScore);
-        setIssuesCount(totalIssues);
+        if (response.platforms) {
+          setPlatformsData(response.platforms);
+          
+          const totalScore = response.platforms.reduce((sum, platform) => 
+            sum + (platform.connected ? platform.privacyScore : 0), 0);
+          const connectedPlatforms = response.platforms.filter(platform => platform.connected).length;
+          const avgScore = connectedPlatforms > 0 ? Math.round(totalScore / connectedPlatforms) : 0;
+          
+          const totalIssues = response.platforms.reduce((sum, platform) => 
+            sum + (platform.issues || 0), 0);
+          
+          setOverallScore(avgScore);
+          setIssuesCount(totalIssues);
+        }
       } else {
         toast({
           title: "Error loading data",

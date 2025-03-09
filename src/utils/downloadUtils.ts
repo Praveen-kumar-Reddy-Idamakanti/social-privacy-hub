@@ -4,6 +4,26 @@
  */
 
 /**
+ * Interface for platform data
+ */
+export interface Platform {
+  id: string;
+  connected: boolean;
+  privacyScore: number;
+  issues: number;
+}
+
+/**
+ * Interface for API responses
+ */
+export interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  platforms?: Platform[];
+}
+
+/**
  * Generate a JSON file and trigger download
  */
 export const downloadPrivacyData = (platform: string, data: any) => {
@@ -80,7 +100,7 @@ export const getPlatformPrivacyData = (platform: string) => {
 /**
  * Save privacy settings to the backend
  */
-export const savePrivacySettings = async (platform: string, settings: any) => {
+export const savePrivacySettings = async (platform: string, settings: any): Promise<ApiResponse<any>> => {
   try {
     // This would be a real API call in a production application
     console.log(`Saving ${platform} privacy settings to backend:`, settings);
@@ -100,7 +120,7 @@ export const savePrivacySettings = async (platform: string, settings: any) => {
 /**
  * Load privacy settings from the backend
  */
-export const loadPrivacySettings = async (platform: string) => {
+export const loadPrivacySettings = async (platform: string): Promise<ApiResponse<any>> => {
   try {
     console.log(`Loading ${platform} privacy settings from backend`);
     
@@ -121,7 +141,7 @@ export const loadPrivacySettings = async (platform: string) => {
 /**
  * Load all platforms data from the backend
  */
-export const loadAllPlatformsData = async () => {
+export const loadAllPlatformsData = async (): Promise<ApiResponse<Platform[]>> => {
   try {
     console.log("Loading all platforms data from backend");
     
@@ -129,7 +149,7 @@ export const loadAllPlatformsData = async () => {
     return new Promise((resolve) => {
       setTimeout(() => {
         // Return dummy platforms data for now
-        const platforms = [
+        const platforms: Platform[] = [
           { 
             id: 'facebook',
             connected: true,
@@ -157,4 +177,3 @@ export const loadAllPlatformsData = async () => {
     throw error;
   }
 };
-
