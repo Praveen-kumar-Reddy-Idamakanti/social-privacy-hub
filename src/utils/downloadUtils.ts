@@ -1,6 +1,4 @@
-
 /**
-<<<<<<< HEAD
  * Utility functions for downloading privacy data and backend integration
  */
 
@@ -25,39 +23,27 @@ export interface ApiResponse<T> {
 }
 
 /**
-=======
- * Utility functions for downloading privacy data
- */
-
-/**
->>>>>>> d0ca5c2 (Initial commit)
  * Generate a JSON file and trigger download
  */
 export const downloadPrivacyData = (platform: string, data: any) => {
-  // Format the data for download
   const exportData = {
     platform,
     exportDate: new Date().toISOString(),
     privacySettings: data
   };
   
-  // Convert to JSON string
   const jsonString = JSON.stringify(exportData, null, 2);
   
-  // Create a blob
   const blob = new Blob([jsonString], { type: 'application/json' });
   
-  // Create download link
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
   link.download = `${platform}-privacy-data-${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
   
-  // Trigger download
   document.body.appendChild(link);
   link.click();
   
-  // Clean up
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
@@ -66,7 +52,6 @@ export const downloadPrivacyData = (platform: string, data: any) => {
  * Get dummy privacy data based on platform
  */
 export const getPlatformPrivacyData = (platform: string) => {
-  // This would come from an API in a real application
   const commonSettings = {
     profileVisibility: "friends",
     dataSharing: "minimal",
@@ -103,17 +88,14 @@ export const getPlatformPrivacyData = (platform: string) => {
       return commonSettings;
   }
 };
-<<<<<<< HEAD
 
 /**
  * Save privacy settings to the backend
  */
 export const savePrivacySettings = async (platform: string, settings: any): Promise<ApiResponse<any>> => {
   try {
-    // This would be a real API call in a production application
     console.log(`Saving ${platform} privacy settings to backend:`, settings);
     
-    // Simulated API call
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true, message: `${platform} privacy settings saved successfully` });
@@ -132,10 +114,8 @@ export const loadPrivacySettings = async (platform: string): Promise<ApiResponse
   try {
     console.log(`Loading ${platform} privacy settings from backend`);
     
-    // Simulated API call - in a real app, this would fetch from a backend
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Return dummy data for now
         const data = getPlatformPrivacyData(platform);
         resolve({ success: true, data });
       }, 1000);
@@ -153,10 +133,8 @@ export const loadAllPlatformsData = async (): Promise<ApiResponse<Platform[]>> =
   try {
     console.log("Loading all platforms data from backend");
     
-    // Simulated API call - in a real app, this would fetch from a backend
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Return dummy platforms data for now
         const platforms: Platform[] = [
           { 
             id: 'facebook',
@@ -185,5 +163,3 @@ export const loadAllPlatformsData = async (): Promise<ApiResponse<Platform[]>> =
     throw error;
   }
 };
-=======
->>>>>>> d0ca5c2 (Initial commit)
