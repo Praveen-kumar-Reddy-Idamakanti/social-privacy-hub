@@ -1,5 +1,6 @@
 
 /**
+<<<<<<< HEAD
  * Utility functions for downloading privacy data and backend integration
  */
 
@@ -24,6 +25,12 @@ export interface ApiResponse<T> {
 }
 
 /**
+=======
+ * Utility functions for downloading privacy data
+ */
+
+/**
+>>>>>>> d0ca5c2 (Initial commit)
  * Generate a JSON file and trigger download
  */
 export const downloadPrivacyData = (platform: string, data: any) => {
@@ -96,6 +103,7 @@ export const getPlatformPrivacyData = (platform: string) => {
       return commonSettings;
   }
 };
+<<<<<<< HEAD
 
 /**
  * Save privacy settings to the backend
@@ -177,3 +185,5 @@ export const loadAllPlatformsData = async (): Promise<ApiResponse<Platform[]>> =
     throw error;
   }
 };
+=======
+>>>>>>> d0ca5c2 (Initial commit)
