@@ -248,7 +248,7 @@ const PlatformPage: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           className="flex items-center space-x-1 text-gray-500 hover:text-gray-800"
         >
           <ChevronLeft className="h-4 w-4" />
