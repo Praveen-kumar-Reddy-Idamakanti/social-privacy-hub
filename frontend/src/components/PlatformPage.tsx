@@ -1,4 +1,4 @@
-
+//Platoform.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Shield, Facebook, Twitter, Instagram, RefreshCw } from 'lucide-react';
@@ -248,7 +248,7 @@ const PlatformPage: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          onClick={() => navigate('/home')}
+          onClick={() => navigate('/')}
           className="flex items-center space-x-1 text-gray-500 hover:text-gray-800"
         >
           <ChevronLeft className="h-4 w-4" />

@@ -1,4 +1,4 @@
-
+//SocialCard.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Shield, Lock, ChevronRight } from 'lucide-react';

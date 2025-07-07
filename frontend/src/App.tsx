@@ -9,6 +9,8 @@ import PlatformPage from "./components/PlatformPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/register";
 
+
+
 // Authentication context for protecting routes
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
@@ -28,19 +30,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user');
+    // Check if user is logged in when the app loads
+    const checkAuth = () => {
+      const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          // If user data is corrupted, log the user out
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+        }
       }
-    }
+      
+      setLoading(false);
+    };
     
-    setLoading(false);
+    checkAuth();
   }, []);
   
   const login = (userData: any, token: string) => {
@@ -82,6 +90,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, loading } = useAuth();
   
   if (loading) {
+    // You could show a loading spinner here
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
   
