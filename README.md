@@ -1,140 +1,69 @@
-# Social Privacy Hub
+# Welcome to your Lovable project
 
-A comprehensive dashboard for monitoring and managing your social media privacy settings across multiple platforms. The application provides a unified interface to view privacy scores, detect potential security issues, and receive personalized recommendations for enhancing your online privacy.
+## Project info
 
-## ✨ Features
+**URL**: https://lovable.dev/projects/8e2925d3-49ef-411d-8a41-f85baca8f978
 
-- **Unified Dashboard**: View all connected social media accounts in one place
-- **Privacy Scoring**: Get a privacy score for each connected platform
-- **Security Alerts**: Receive notifications about potential privacy risks
-- **Password Breach Checker**: Verify if your credentials have been compromised in data breaches
-- **Privacy Controls**: Manage your privacy settings across platforms
-- **User Authentication**: Secure login and registration system
-- **Responsive Design**: Works on desktop and mobile devices
+## How can I edit this code?
 
-## 🚀 Tech Stack
+There are several ways of editing your application.
 
-- **Frontend**:
-  - React 18 with TypeScript
-  - Vite for fast development and building
-  - Radix UI components
-  - Tailwind CSS for styling
-  - React Query for data fetching and state management
-  - React Router for navigation
+**Use Lovable**
 
-- **Backend**:
-  - Node.js with Express
-  - JWT for authentication
+Simply visit the [Lovable Project](https://lovable.dev/projects/8e2925d3-49ef-411d-8a41-f85baca8f978) and start prompting.
 
-## 🛠️ Prerequisites
+Changes made via Lovable will be committed automatically to this repo.
 
-- Node.js (v16 or higher)
-- npm or yarn
-- Git
+**Use your preferred IDE**
 
-## 🚀 Getting Started
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/social-privacy-hub.git
-   cd social-privacy-hub
-   ```
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-2. **Install dependencies**
-   ```bash
-   # Install root dependencies
-   npm install
-   
-   # Install frontend dependencies
-   cd frontend
-   npm install
-   
-   # Install backend dependencies
-   cd ../backend
-   npm install
-   ```
+Follow these steps:
 
-3. **Set up environment variables**
-   - Create a `.env` file in the backend directory with the following variables:
-     ```
-     PORT=5000
-     JWT_SECRET=your_jwt_secret
-     NODE_ENV=development
-     ```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-4. **Start the development servers**
-   ```bash
-   # From the project root, start both frontend and backend
-   npm run dev
-   ```
-   
-   Or start them separately:
-   ```bash
-   # In one terminal (backend)
-   cd backend
-   npm start
-   
-   # In another terminal (frontend)
-   cd frontend
-   npm run dev
-   ```
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-5. **Open the application**
-   The frontend will be available at `http://localhost:5173`
+# Step 3: Install the necessary dependencies.
+npm i
 
-## 📂 Project Structure
-
-```
-social-privacy-hub/
-├── backend/              # Backend server code
-│   ├── node_modules/
-│   ├── .env             # Environment variables
-│   ├── package.json
-│   └── server.js        # Main server file
-├── frontend/            # Frontend React application
-│   ├── public/
-│   └── src/
-│       ├── components/   # Reusable UI components
-│       ├── pages/        # Page components
-│       ├── hooks/        # Custom React hooks
-│       ├── lib/          # Utility functions
-│       ├── App.tsx       # Main App component
-│       └── main.tsx      # Application entry point
-├── .gitignore
-├── package.json
-└── README.md
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-## 🔒 Security
+**Edit a file directly in GitHub**
 
-- JWT-based authentication
-- Secure password hashing
-- Environment variables for sensitive data
-- CORS protection
-- Rate limiting (recommended for production)
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-## 🤝 Contributing
+**Use GitHub Codespaces**
 
-Contributions are welcome! Please follow these steps:
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## What technologies are used for this project?
 
-## 📄 License
+This project is built with .
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-## 🙏 Acknowledgments
+## How can I deploy this project?
 
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Radix UI](https://www.radix-ui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Lucide Icons](https://lucide.dev/)
+Simply open [Lovable](https://lovable.dev/projects/8e2925d3-49ef-411d-8a41-f85baca8f978) and click on Share -> Publish.
 
----
+## I want to use a custom domain - is that possible?
 
-Made with ❤️ by Praveen Kumar Reddy Idamakanti
+We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
