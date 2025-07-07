@@ -2,125 +2,69 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import SocialCard from '@/components/SocialCard';
+import BreachChecker from '@/components/BreachChecker';
 import { Shield, RefreshCw, AlertCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  downloadPrivacyData, 
-  getPlatformPrivacyData, 
-  loadAllPlatformsData,
-  savePrivacySettings,
-  Platform
-} from '@/utils/downloadUtils';
+
+const platforms = [
+  { 
+    id: 'facebook',
+    connected: true,
+    privacyScore: 65,
+    issues: 2
+  },
+  { 
+    id: 'twitter',
+    connected: true,
+    privacyScore: 85,
+    issues: 0
+  },
+  { 
+    id: 'instagram',
+    connected: true,
+    privacyScore: 40,
+    issues: 3
+  }
+];
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
-  const [platformsData, setPlatformsData] = useState<Platform[]>([]);
+  const [platformsData, setPlatformsData] = useState(platforms);
   const [overallScore, setOverallScore] = useState(0);
   const [issuesCount, setIssuesCount] = useState(0);
-  const [savingData, setSavingData] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    loadPlatformsData();
+    setTimeout(() => {
+      const totalScore = platforms.reduce((sum, platform) => sum + (platform.connected ? platform.privacyScore : 0), 0);
+      const connectedPlatforms = platforms.filter(platform => platform.connected).length;
+      const avgScore = connectedPlatforms > 0 ? Math.round(totalScore / connectedPlatforms) : 0;
+      
+      const totalIssues = platforms.reduce((sum, platform) => sum + (platform.issues || 0), 0);
+      
+      setOverallScore(avgScore);
+      setIssuesCount(totalIssues);
+      setLoading(false);
+    }, 1500);
   }, []);
 
-  const loadPlatformsData = async () => {
+  const handleRefresh = () => {
     setLoading(true);
-    
-    try {
-      const response = await loadAllPlatformsData();
-      
-      if (response.success) {
-        if (response.platforms) {
-          setPlatformsData(response.platforms);
-          
-          const totalScore = response.platforms.reduce((sum, platform) => 
-            sum + (platform.connected ? platform.privacyScore : 0), 0);
-          const connectedPlatforms = response.platforms.filter(platform => platform.connected).length;
-          const avgScore = connectedPlatforms > 0 ? Math.round(totalScore / connectedPlatforms) : 0;
-          
-          const totalIssues = response.platforms.reduce((sum, platform) => 
-            sum + (platform.issues || 0), 0);
-          
-          setOverallScore(avgScore);
-          setIssuesCount(totalIssues);
-        }
-      } else {
-        toast({
-          title: "Error loading data",
-          description: "Could not load platform data from the server.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error("Error loading platforms data:", error);
-      toast({
-        title: "Error loading data",
-        description: "There was a problem connecting to the server.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDownloadAll = () => {
-    toast({
-      title: "Downloading all data",
-      description: "Preparing downloads for all connected platforms...",
-    });
-    
-    setTimeout(() => {
-      platformsData.forEach(platform => {
-        if (platform.connected) {
-          const data = getPlatformPrivacyData(platform.id);
-          downloadPrivacyData(platform.id, data);
-        }
-      });
-    }, 1000);
-  };
-
-  const handleRefresh = async () => {
     toast({
       title: "Refreshing privacy data",
       description: "Syncing with your connected platforms...",
     });
-    
-    await loadPlatformsData();
-    
-    toast({
-      title: "Privacy data updated",
-      description: "All your privacy information is now up to date.",
-    });
-  };
 
-  const handleSaveChanges = async () => {
-    setSavingData(true);
-    try {
-      for (const platform of platformsData) {
-        if (platform.connected) {
-          const settings = getPlatformPrivacyData(platform.id);
-          await savePrivacySettings(platform.id, settings);
-        }
-      }
-      
+    setTimeout(() => {
+      setLoading(false);
       toast({
-        title: "Changes saved",
-        description: "Your privacy settings have been saved to the server.",
+        title: "Privacy data updated",
+        description: "All your privacy information is now up to date.",
       });
-    } catch (error) {
-      console.error("Error saving changes:", error);
-      toast({
-        title: "Error saving changes",
-        description: "There was a problem saving your changes to the server.",
-        variant: "destructive"
-      });
-    } finally {
-      setSavingData(false);
-    }
+    }, 2000);
   };
 
   const getScoreColor = (score: number) => {
@@ -141,23 +85,11 @@ const Index = () => {
       
       <main className="container max-w-6xl mx-auto px-4 pt-24 pb-16">
         <div className="animate-fade-in">
-          <div className="mb-8 flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-medium tracking-tight">Privacy Dashboard</h1>
-              <p className="mt-2 text-muted-foreground">
-                Manage privacy settings across all your social media accounts in one place.
-              </p>
-            </div>
-            <div>
-              <Button 
-                variant="default"
-                onClick={handleSaveChanges}
-                disabled={savingData}
-                className="ml-2"
-              >
-                {savingData ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
+          <div className="mb-8">
+            <h1 className="text-3xl font-medium tracking-tight">Privacy Dashboard</h1>
+            <p className="mt-2 text-muted-foreground">
+              Manage privacy settings across all your social media accounts in one place.
+            </p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
@@ -165,15 +97,6 @@ const Index = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-medium">Overall Privacy</h2>
                 <div className="flex space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleDownloadAll}
-                    className="flex items-center space-x-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span>Download All</span>
-                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -231,7 +154,7 @@ const Index = () => {
                     <div className="bg-gray-50 rounded-lg p-4 text-center">
                       <p className="text-sm text-muted-foreground">Connected</p>
                       <p className="text-2xl font-medium mt-1">
-                        {platformsData.filter(p => p.connected).length}
+                        {platforms.filter(p => p.connected).length}
                       </p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4 text-center">
@@ -277,6 +200,11 @@ const Index = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Breach Checker Section */}
+          <div className="mb-10">
+            <BreachChecker />
           </div>
           
           <div>
