@@ -18,8 +18,36 @@ import { Label } from '@/components/ui/label';
 // API service for authentication
 const authService = {
   login: async (email: string, password: string) => {
+    // Mock authentication for development
+    if (process.env.NODE_ENV === 'development' || import.meta.env.DEV) {
+      if (email === 'test@example.com' && password === 'Test@1234') {
+        const mockUser = {
+          _id: '12345',
+          name: 'Test User',
+          email: 'test@example.com',
+          role: 'Admin'
+        };
+        
+        // Mock token
+        const mockToken = 'mock-jwt-token';
+        
+        // Store in localStorage
+        localStorage.setItem('auth_token', mockToken);
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        
+        return {
+          token: mockToken,
+          user: mockUser,
+          message: 'Login successful'
+        };
+      } else {
+        throw new Error('Invalid email or password');
+      }
+    }
+
+    // Production/real authentication
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,6 +74,26 @@ const authService = {
   
   // Google OAuth login
   loginWithGoogle: async () => {
+    if (process.env.NODE_ENV === 'development' || import.meta.env.DEV) {
+      // Mock Google login for development
+      const mockUser = {
+        _id: '12345',
+        name: 'Google Test User',
+        email: 'google-test@example.com',
+        role: 'User'
+      };
+      
+      const mockToken = 'mock-google-jwt-token';
+      
+      localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
+      // Redirect to home page after successful login
+      window.location.href = '/';
+      return;
+    }
+    
+    // Production Google login
     window.location.href = '/api/auth/google';
   }
 };
@@ -116,6 +164,15 @@ const LoginPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTestLogin = () => {
+    setEmail('test@example.com');
+    setPassword('Test@1234');
+    // Auto-submit the form after a small delay to allow state to update
+    setTimeout(() => {
+      document.forms[0].requestSubmit();
+    }, 100);
   };
 
   return (
@@ -225,7 +282,21 @@ const LoginPage: React.FC = () => {
               <span className="px-4 text-sm text-gray-500">or</span>
               <div className="h-px bg-gray-200 flex-grow"></div>
             </div>
-            
+
+            <div className="mt-4">
+              <Button 
+                type="button"
+                variant="outline"
+                className="w-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                onClick={handleTestLogin}
+                disabled={isLoading}
+              >
+                Use Test Account
+              </Button>
+              <p className="mt-2 text-xs text-center text-gray-500">
+                Test credentials: test@example.com / Test@1234
+              </p>
+            </div>
             
           </CardContent>
           

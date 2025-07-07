@@ -104,36 +104,61 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 // Initialize QueryClient
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            {/* Protected routes */}
-            <Route path="/home" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/platform/:platform" element={
-              <ProtectedRoute>
-                <PlatformPage />
-              </ProtectedRoute>
-            } />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+// Mock API responses for development
+if (import.meta.env.DEV) {
+  // Mock any API calls that would normally go to the backend
+  const originalFetch = window.fetch;
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    // Mock the auth check endpoint
+    if (typeof input === 'string' && input.includes('/api/auth/check')) {
+      const token = localStorage.getItem('auth_token');
+      const user = localStorage.getItem('user');
+      
+      if (token && user) {
+        return new Response(JSON.stringify({ isAuthenticated: true, user: JSON.parse(user) }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } else {
+        return new Response(JSON.stringify({ isAuthenticated: false }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    
+    // For all other requests, use the original fetch
+    return originalFetch(input, init);
+  };
+}
 
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/platform/:platform" element={
+                <ProtectedRoute>
+                  <PlatformPage />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+          <Sonner />
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 export default App;
