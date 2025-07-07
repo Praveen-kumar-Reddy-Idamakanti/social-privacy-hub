@@ -9,6 +9,8 @@ import PlatformPage from "./components/PlatformPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/register";
 
+
+
 // Authentication context for protecting routes
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
@@ -28,19 +30,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user');
+    // Check if user is logged in when the app loads
+    const checkAuth = () => {
+      const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          // If user data is corrupted, log the user out
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+        }
       }
-    }
+      
+      setLoading(false);
+    };
     
-    setLoading(false);
+    checkAuth();
   }, []);
   
   const login = (userData: any, token: string) => {
@@ -82,6 +90,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, loading } = useAuth();
   
   if (loading) {
+    // You could show a loading spinner here
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
   
@@ -95,36 +104,61 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 // Initialize QueryClient
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            {/* Protected routes */}
-            <Route path="/home" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/platform/:platform" element={
-              <ProtectedRoute>
-                <PlatformPage />
-              </ProtectedRoute>
-            } />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+// Mock API responses for development
+if (import.meta.env.DEV) {
+  // Mock any API calls that would normally go to the backend
+  const originalFetch = window.fetch;
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    // Mock the auth check endpoint
+    if (typeof input === 'string' && input.includes('/api/auth/check')) {
+      const token = localStorage.getItem('auth_token');
+      const user = localStorage.getItem('user');
+      
+      if (token && user) {
+        return new Response(JSON.stringify({ isAuthenticated: true, user: JSON.parse(user) }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } else {
+        return new Response(JSON.stringify({ isAuthenticated: false }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    
+    // For all other requests, use the original fetch
+    return originalFetch(input, init);
+  };
+}
 
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/platform/:platform" element={
+                <ProtectedRoute>
+                  <PlatformPage />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+          <Sonner />
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 export default App;
