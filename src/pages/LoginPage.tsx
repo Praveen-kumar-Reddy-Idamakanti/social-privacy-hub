@@ -64,8 +64,8 @@ const LoginPage: React.FC = () => {
           description: `Welcome back, ${TEST_USER.name}!`,
         });
         
-        // Redirect to home page
-        navigate('/');
+        // Redirect to dashboard
+        navigate('/dashboard');
       } else {
         throw new Error('Invalid email or password');
       }
